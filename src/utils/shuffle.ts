@@ -1,0 +1,15 @@
+/**
+ * Fisher-Yates (Knuth) 洗牌算法。
+ * 返回一个新的随机排列数组，不修改原数组。
+ *
+ * @param array 输入数组
+ * @returns 包含相同元素的新随机排列数组
+ */
+export function shuffle<T>(array: T[]): T[] {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
