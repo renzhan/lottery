@@ -48,7 +48,7 @@ describe('PuzzleGrid', () => {
 
   it('disables already-flipped tiles', () => {
     const handleClick = vi.fn();
-    const tiles = makeTiles(4, [undefined, { index: 1, imageDataUrl: '', lotteryNumber: 'A2', isFlipped: true }]);
+    const tiles = makeTiles(4, [{}, { index: 1, imageDataUrl: '', lotteryNumber: 'A2', isFlipped: true }]);
     render(
       <PuzzleGrid tiles={tiles} onTileClick={handleClick} isAnimating={false} rows={2} cols={2} />
     );
