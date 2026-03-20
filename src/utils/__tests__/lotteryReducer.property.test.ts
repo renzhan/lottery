@@ -18,6 +18,8 @@ const tileArb = fc.record({
   lotteryNumber: fc.string(),
   isFlipped: fc.boolean(),
   path: fc.string(),
+  imgW: fc.integer({ min: 100, max: 2000 }),
+  imgH: fc.integer({ min: 100, max: 2000 }),
 });
 
 describe('Property 4: 初始状态全部未翻转 (lotteryReducer INIT_TILES)', () => {
@@ -233,6 +235,8 @@ describe('Property 10: 翻转状态持久化 (FLIP_COMPLETE sequence + CLOSE_MOD
           lotteryNumber: r.lotteryNumber,
           isFlipped: false,
           path: '',
+          imgW: 800,
+          imgH: 600,
         }))
       );
 

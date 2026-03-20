@@ -3,7 +3,7 @@ import { lotteryReducer, initialState } from '../lotteryReducer';
 import type { TileData, LotteryState } from '../../types';
 
 function makeTile(index: number, lotteryNumber: string, isFlipped = false): TileData {
-  return { index, row: 0, col: index, imageDataUrl: `data:image/png;base64,tile${index}`, lotteryNumber, isFlipped, path: '' };
+  return { index, row: 0, col: index, imageDataUrl: `data:image/png;base64,tile${index}`, lotteryNumber, isFlipped, path: '', imgW: 800, imgH: 600 };
 }
 
 describe('单元测试：所有拼图块翻转完毕显示提示 (allFlipped detection)', () => {
