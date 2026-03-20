@@ -6,3 +6,4 @@ export { sliceImage } from './imageSlice';
 export { validateGridInput, validateImageFile } from './validators';
 export { lotteryReducer, initialState } from './lotteryReducer';
 export type { LotteryAction } from './lotteryReducer';
+export { generateEdgeMap, generateEdgePointsMap, generateTilePath, generateSnakeOrder } from './jigsawPath';

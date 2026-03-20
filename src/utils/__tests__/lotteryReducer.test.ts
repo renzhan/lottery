@@ -3,7 +3,7 @@ import { lotteryReducer, initialState } from '../lotteryReducer';
 import type { TileData, LotteryState } from '../../types';
 
 function makeTile(index: number, lotteryNumber: string, isFlipped = false): TileData {
-  return { index, imageDataUrl: `data:image/png;base64,tile${index}`, lotteryNumber, isFlipped };
+  return { index, row: 0, col: index, imageDataUrl: `data:image/png;base64,tile${index}`, lotteryNumber, isFlipped, path: '' };
 }
 
 describe('单元测试：所有拼图块翻转完毕显示提示 (allFlipped detection)', () => {
@@ -14,10 +14,9 @@ describe('单元测试：所有拼图块翻转完毕显示提示 (allFlipped det
       makeTile(2, 'A3', false), // last unflipped tile
     ];
     const state: LotteryState = {
+      ...initialState,
       tiles,
-      isAnimating: true,
-      activeNumber: null,
-      allFlipped: false,
+      flippingIndex: 2,
     };
 
     const result = lotteryReducer(state, { type: 'FLIP_COMPLETE', index: 2 });
@@ -33,10 +32,9 @@ describe('单元测试：所有拼图块翻转完毕显示提示 (allFlipped det
       makeTile(2, 'A3', false),
     ];
     const state: LotteryState = {
+      ...initialState,
       tiles,
-      isAnimating: true,
-      activeNumber: null,
-      allFlipped: false,
+      flippingIndex: 0,
     };
 
     const result = lotteryReducer(state, { type: 'FLIP_COMPLETE', index: 0 });

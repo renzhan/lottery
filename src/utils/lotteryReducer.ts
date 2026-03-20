@@ -1,33 +1,71 @@
-import type { TileData, LotteryState } from '../types';
+import type { TileData, EdgeMap, LotteryState, MarqueeState } from '../types';
 
 export type LotteryAction =
   | { type: 'INIT_TILES'; tiles: TileData[] }
+  | { type: 'INIT_FULL'; tiles: TileData[]; edgeMap: EdgeMap; traversalOrder: number[] }
   | { type: 'FLIP_TILE'; index: number }
   | { type: 'FLIP_COMPLETE'; index: number }
-  | { type: 'CLOSE_MODAL' };
+  | { type: 'FLIP_SELECTED' }
+  | { type: 'CLOSE_MODAL' }
+  | { type: 'START_MARQUEE' }
+  | { type: 'STOP_MARQUEE'; index: number }
+  | { type: 'SET_HIGHLIGHT'; index: number };
+
+const defaultMarquee: MarqueeState = {
+  isRunning: false,
+  highlightIndex: null,
+  selectedIndex: null,
+  speed: 100,
+};
 
 export const initialState: LotteryState = {
   tiles: [],
-  isAnimating: false,
+  edgeMap: { horizontal: [], vertical: [] },
+  marquee: { ...defaultMarquee },
+  flippingIndex: null,
   activeNumber: null,
   allFlipped: false,
+  traversalOrder: [],
 };
 
 export function lotteryReducer(state: LotteryState, action: LotteryAction): LotteryState {
   switch (action.type) {
     case 'INIT_TILES':
       return {
+        ...state,
         tiles: action.tiles.map((tile) => ({ ...tile, isFlipped: false })),
-        isAnimating: false,
+        flippingIndex: null,
         activeNumber: null,
         allFlipped: false,
       };
 
-    case 'FLIP_TILE':
+    case 'INIT_FULL':
       return {
         ...state,
-        isAnimating: true,
+        tiles: action.tiles.map((tile) => ({ ...tile, isFlipped: false })),
+        edgeMap: action.edgeMap,
+        traversalOrder: action.traversalOrder,
+        flippingIndex: null,
+        activeNumber: null,
+        allFlipped: false,
+        marquee: { ...defaultMarquee },
       };
+
+    case 'FLIP_TILE':
+      if (state.flippingIndex !== null) return state;
+      return {
+        ...state,
+        flippingIndex: action.index,
+      };
+
+    case 'FLIP_SELECTED': {
+      if (state.marquee.selectedIndex === null) return state;
+      if (state.flippingIndex !== null) return state;
+      return {
+        ...state,
+        flippingIndex: state.marquee.selectedIndex,
+      };
+    }
 
     case 'FLIP_COMPLETE': {
       const updatedTiles = state.tiles.map((tile) =>
@@ -37,8 +75,9 @@ export function lotteryReducer(state: LotteryState, action: LotteryAction): Lott
       const allFlipped = updatedTiles.every((t) => t.isFlipped);
 
       return {
+        ...state,
         tiles: updatedTiles,
-        isAnimating: false,
+        flippingIndex: null,
         activeNumber: flippedTile?.lotteryNumber ?? null,
         allFlipped,
       };
@@ -48,6 +87,36 @@ export function lotteryReducer(state: LotteryState, action: LotteryAction): Lott
       return {
         ...state,
         activeNumber: null,
+      };
+
+    case 'START_MARQUEE':
+      return {
+        ...state,
+        marquee: {
+          ...state.marquee,
+          isRunning: true,
+          selectedIndex: null,
+        },
+      };
+
+    case 'STOP_MARQUEE':
+      return {
+        ...state,
+        marquee: {
+          ...state.marquee,
+          isRunning: false,
+          selectedIndex: action.index,
+          highlightIndex: null,
+        },
+      };
+
+    case 'SET_HIGHLIGHT':
+      return {
+        ...state,
+        marquee: {
+          ...state.marquee,
+          highlightIndex: action.index,
+        },
       };
 
     default:

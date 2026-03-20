@@ -3,19 +3,33 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   background: #1a1a2e;
   position: relative;
+  overflow: hidden;
 }
 
-.gridWrapper {
-  width: 100%;
-  max-width: calc(100vh * 16 / 9);
-  aspect-ratio: 16 / 9;
+.titleArea {
+  height: 42.5vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #fff;
+  font-size: 2rem;
+}
+
+.puzzleArea {
+  height: 32.5vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bottomArea {
+  height: 25vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
 .loading {
@@ -24,10 +38,6 @@
 }
 
 .allFlippedMessage {
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
   background: rgba(255, 215, 0, 0.9);
   color: #1a1a2e;
   padding: 0.75rem 2rem;

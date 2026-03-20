@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
 
@@ -16,7 +16,7 @@ const mockCanvas = {
   toDataURL: vi.fn(() => 'data:image/png;base64,mockdata'),
 };
 
-describe('端到端冒烟测试：配置 → 进入抽奖 → 点击翻转 → 弹窗显示号码', () => {
+describe('端到端冒烟测试：配置 → 进入抽奖 → 空格键启动跑马灯 → 空格键停止 → 翻转 → 弹窗显示号码', () => {
   let originalCreateObjectURL: typeof URL.createObjectURL;
   let originalRevokeObjectURL: typeof URL.revokeObjectURL;
   let originalCreateElement: typeof document.createElement;
@@ -46,10 +46,8 @@ describe('端到端冒烟测试：配置 → 进入抽奖 → 点击翻转 → �
       }
       set src(value: string) {
         this._src = value;
-        // Trigger onload asynchronously (microtask) to simulate image loading
-        Promise.resolve().then(() => {
-          if (this.onload) this.onload();
-        });
+        // Trigger onload synchronously for fake timers compatibility
+        if (this.onload) this.onload();
       }
     }
     globalThis.Image = MockImage as unknown as typeof globalThis.Image;
@@ -74,8 +72,7 @@ describe('端到端冒烟测试：配置 → 进入抽奖 → 点击翻转 → �
     globalThis.Image = originalImage;
   });
 
-  it('完整流程：上传图片 → 配置 → 进入抽奖 → 点击拼图块 → 弹窗显示号码', async () => {
-    // Use small grid for faster test: 2 rows × 2 cols = 4 tiles
+  it('完整流程：上传图片 → 配置 → 进入抽奖 → 空格键启停跑马灯 → 翻转 → 弹窗显示号码', async () => {
     render(<App />);
 
     // Step 1: Verify ConfigPage is rendered
@@ -104,30 +101,67 @@ describe('端到端冒烟测试：配置 → 进入抽奖 → 点击翻转 → �
 
     // Step 5: Wait for the lottery page to load (image processing is async)
     await waitFor(() => {
-      expect(screen.getByTestId('puzzle-grid')).toBeInTheDocument();
+      expect(screen.getByTestId('lottery-page')).toBeInTheDocument();
     });
 
-    // Verify 4 tiles are rendered (2×2 grid)
-    expect(screen.getByTestId('puzzle-tile-0')).toBeInTheDocument();
-    expect(screen.getByTestId('puzzle-tile-1')).toBeInTheDocument();
-    expect(screen.getByTestId('puzzle-tile-2')).toBeInTheDocument();
-    expect(screen.getByTestId('puzzle-tile-3')).toBeInTheDocument();
+    // Wait for tiles to finish loading (loading state disappears)
+    await waitFor(() => {
+      expect(screen.queryByText('加载中...')).not.toBeInTheDocument();
+    });
 
-    // Step 6: Click the first puzzle tile to trigger flip
-    const firstTile = screen.getByTestId('puzzle-tile-0');
-    fireEvent.click(firstTile);
+    // Step 6: Press space key to start marquee
+    // Use fake timers to control requestAnimationFrame-based marquee
+    vi.useFakeTimers();
 
-    // Step 7: Wait for the flip animation (600ms) and modal to appear
+    await act(async () => {
+      fireEvent.keyDown(document, { code: 'Space' });
+    });
+
+    // Advance timers to let the marquee run a few steps
+    // requestAnimationFrame uses timestamps; we advance enough for at least one step
+    await act(async () => {
+      vi.advanceTimersByTime(200);
+    });
+
+    // Step 7: Press space key again to stop marquee (selects a tile)
+    await act(async () => {
+      fireEvent.keyDown(document, { code: 'Space' });
+    });
+
+    // Step 8: Wait for flip animation (600ms) and modal to appear
+    await act(async () => {
+      vi.advanceTimersByTime(700);
+    });
+
+    vi.useRealTimers();
+
+    // Step 9: Verify NumberModal displays a valid lottery number
     await waitFor(() => {
       expect(screen.getByTestId('number-modal-overlay')).toBeInTheDocument();
     }, { timeout: 2000 });
 
-    // Step 8: Verify the NumberModal displays a valid lottery number
     const numberDisplay = screen.getByTestId('number-modal-number');
     expect(numberDisplay).toBeInTheDocument();
 
     // The number should match the pattern: letter(s) + digit(s) (e.g., A1, B2)
     const displayedNumber = numberDisplay.textContent ?? '';
     expect(displayedNumber).toMatch(/^[A-Z]+\d+$/);
+
+    // Step 10: Close modal
+    vi.useFakeTimers();
+    const closeButton = screen.getByTestId('number-modal-close');
+    await act(async () => {
+      fireEvent.click(closeButton);
+    });
+    vi.useRealTimers();
+
+    // Verify modal is closed
+    await waitFor(() => {
+      expect(screen.queryByTestId('number-modal-overlay')).not.toBeInTheDocument();
+    });
+
+    // Step 11: Verify the tile stays flipped - the lottery-page should still be visible
+    // and we should be able to see the page is intact
+    expect(screen.getByTestId('lottery-page')).toBeInTheDocument();
   });
 });
