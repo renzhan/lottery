@@ -169,6 +169,12 @@ export const LotteryPage: React.FC<LotteryPageProps> = ({ config }) => {
     }
   }, [state.tiles.length, rows, cols]);
 
+  // Find the active tile for the modal (the tile whose lotteryNumber matches activeNumber)
+  const activeTile = useMemo(() => {
+    if (!state.activeNumber) return null;
+    return state.tiles.find((t) => t.lotteryNumber === state.activeNumber) ?? null;
+  }, [state.activeNumber, state.tiles]);
+
   const containerStyle: React.CSSProperties | undefined = backgroundUrl
     ? {
         backgroundImage: `url(${backgroundUrl})`,
@@ -216,6 +222,12 @@ export const LotteryPage: React.FC<LotteryPageProps> = ({ config }) => {
         number={state.activeNumber ?? ''}
         visible={state.activeNumber !== null}
         onClose={handleModalClose}
+        tile={activeTile}
+        tileWidth={tileWidth}
+        tileHeight={tileHeight}
+        offsetX={activeTile ? activeTile.col * tileWidth : undefined}
+        offsetY={activeTile ? activeTile.row * tileHeight : undefined}
+        tilePath={activeTile?.path}
       />
     </div>
   );
