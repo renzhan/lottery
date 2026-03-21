@@ -410,9 +410,11 @@ describe('Property 12: 跑马灯启停状态切换 (START_MARQUEE / STOP_MARQUEE
           tiles,
           marquee: {
             isRunning: false,
+            isDecelerating: false,
             highlightIndex,
             selectedIndex,
             speed,
+            remainingSteps: null,
           },
         };
 
@@ -433,9 +435,11 @@ describe('Property 12: 跑马灯启停状态切换 (START_MARQUEE / STOP_MARQUEE
           tiles,
           marquee: {
             isRunning: false,
+            isDecelerating: false,
             highlightIndex,
             selectedIndex,
             speed,
+            remainingSteps: null,
           },
         };
 
@@ -465,9 +469,11 @@ describe('Property 12: 跑马灯启停状态切换 (START_MARQUEE / STOP_MARQUEE
             tiles,
             marquee: {
               isRunning: true,
+              isDecelerating: false,
               highlightIndex,
               selectedIndex: null,
               speed,
+              remainingSteps: null,
             },
           };
 
@@ -498,9 +504,11 @@ describe('Property 12: 跑马灯启停状态切换 (START_MARQUEE / STOP_MARQUEE
             tiles,
             marquee: {
               isRunning: true,
+              isDecelerating: false,
               highlightIndex,
               selectedIndex: null,
               speed,
+              remainingSteps: null,
             },
           };
 
@@ -547,9 +555,11 @@ describe('Property 13: 跑马灯跳过已翻转拼图块 (SET_HIGHLIGHT updates 
           tiles,
           marquee: {
             isRunning,
+            isDecelerating: false,
             highlightIndex,
             selectedIndex,
             speed: 100,
+            remainingSteps: null,
           },
         };
 
@@ -570,9 +580,11 @@ describe('Property 13: 跑马灯跳过已翻转拼图块 (SET_HIGHLIGHT updates 
           tiles,
           marquee: {
             isRunning,
+            isDecelerating: false,
             highlightIndex,
             selectedIndex,
             speed: 100,
+            remainingSteps: null,
           },
         };
 
@@ -597,9 +609,11 @@ describe('Property 13: 跑马灯跳过已翻转拼图块 (SET_HIGHLIGHT updates 
           tiles,
           marquee: {
             isRunning,
+            isDecelerating: false,
             highlightIndex,
             selectedIndex,
             speed: 100,
+            remainingSteps: null,
           },
         };
 
