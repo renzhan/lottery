@@ -4,9 +4,16 @@ import styles from './ImageUploader.module.css';
 export interface ImageUploaderProps {
   onImageSelect: (file: File) => void;
   selectedFile: File | null;
+  label?: string;
+  inputId?: string;
 }
 
-export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelect, selectedFile }) => {
+export const ImageUploader: React.FC<ImageUploaderProps> = ({
+  onImageSelect,
+  selectedFile,
+  label = '选择抽奖图片',
+  inputId = 'image-upload',
+}) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -16,11 +23,11 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelect, sel
 
   return (
     <div className={styles.uploader}>
-      <label className={styles.label} htmlFor="image-upload">
-        选择抽奖图片
+      <label className={styles.label} htmlFor={inputId}>
+        {label}
       </label>
       <input
-        id="image-upload"
+        id={inputId}
         className={styles.fileInput}
         type="file"
         accept=".jpg,.jpeg,.png"

@@ -5,6 +5,7 @@ export interface LotteryConfig {
   imageFile: File;
   rows: number;  // 垂直行数，默认 5
   cols: number;  // 水平列数，默认 20
+  backgroundImage?: File;  // 可选背景图片
 }
 
 /** 边缘类型 */
@@ -34,9 +35,11 @@ export interface TileData {
 /** 跑马灯状态 */
 export interface MarqueeState {
   isRunning: boolean;           // 跑马灯是否运行中
+  isDecelerating: boolean;      // 是否正在减速中
   highlightIndex: number | null; // 当前高亮拼图块索引
   selectedIndex: number | null;  // 停止时选中的索引
   speed: number;                 // 当前速度（ms/步）
+  remainingSteps: number | null; // 减速剩余步数
 }
 
 /** 抽奖页面状态 */

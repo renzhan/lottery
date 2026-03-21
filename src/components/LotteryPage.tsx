@@ -20,12 +20,38 @@ export interface LotteryPageProps {
   config: LotteryConfig;
 }
 
-const PUZZLE_AREA_VH = 32.5;
+const PUZZLE_AREA_VH = 45;
 
 export const LotteryPage: React.FC<LotteryPageProps> = ({ config }) => {
   const [state, dispatch] = useReducer(lotteryReducer, initialState);
   const [loading, setLoading] = useState(true);
   const prevSelectedRef = useRef<number | null>(null);
+  const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null);
+
+  // Create and manage Object URL for background image
+  useEffect(() => {
+    if (!config.backgroundImage) {
+      setBackgroundUrl(null);
+      return;
+    }
+
+    const url = URL.createObjectURL(config.backgroundImage);
+
+    // Validate the image loads successfully
+    const img = new Image();
+    img.onload = () => {
+      setBackgroundUrl(url);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      setBackgroundUrl(null);
+    };
+    img.src = url;
+
+    return () => {
+      URL.revokeObjectURL(url);
+    };
+  }, [config.backgroundImage]);
 
   const { rows, cols } = config;
 
@@ -48,8 +74,6 @@ export const LotteryPage: React.FC<LotteryPageProps> = ({ config }) => {
     skipFlipped: true,
     flippedSet,
   });
-
-  useKeyboard({ onSpace: marquee.toggle, enabled: !isFlipping });
 
   // Initialize tiles
   useEffect(() => {
@@ -128,6 +152,14 @@ export const LotteryPage: React.FC<LotteryPageProps> = ({ config }) => {
     prevSelectedRef.current = null;
   }, []);
 
+  const handleEscape = useCallback(() => {
+    if (state.activeNumber !== null) {
+      handleModalClose();
+    }
+  }, [state.activeNumber, handleModalClose]);
+
+  useKeyboard({ onSpace: marquee.toggle, onEscape: handleEscape, enabled: !isFlipping });
+
   const edgeMapRef = useRef(initialState.edgeMap);
   useEffect(() => {
     if (state.tiles.length > 0) {
@@ -135,9 +167,17 @@ export const LotteryPage: React.FC<LotteryPageProps> = ({ config }) => {
     }
   }, [state.tiles.length, rows, cols]);
 
+  const containerStyle: React.CSSProperties | undefined = backgroundUrl
+    ? {
+        backgroundImage: `url(${backgroundUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }
+    : undefined;
+
   if (loading) {
     return (
-      <div className={styles.container} data-testid="lottery-page">
+      <div className={styles.container} data-testid="lottery-page" style={containerStyle}>
         <div className={styles.titleArea} />
         <div className={styles.puzzleArea}>
           <div className={styles.loading}>加载中...</div>
@@ -148,7 +188,7 @@ export const LotteryPage: React.FC<LotteryPageProps> = ({ config }) => {
   }
 
   return (
-    <div className={styles.container} data-testid="lottery-page">
+    <div className={styles.container} data-testid="lottery-page" style={containerStyle}>
       <div className={styles.titleArea} />
       <div className={styles.puzzleArea}>
         <PuzzleBoard

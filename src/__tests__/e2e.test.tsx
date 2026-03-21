@@ -123,15 +123,19 @@ describe('端到端冒烟测试：配置 → 进入抽奖 → 空格键启动跑
       vi.advanceTimersByTime(200);
     });
 
-    // Step 7: Press space key again to stop marquee (selects a tile)
+    // Step 7: Press space key again to stop marquee (triggers deceleration)
     await act(async () => {
       fireEvent.keyDown(document, { code: 'Space' });
     });
 
-    // Step 8: Wait for flip animation (600ms) and modal to appear
-    await act(async () => {
-      vi.advanceTimersByTime(700);
-    });
+    // Step 8: Wait for deceleration phase (4-6 steps with increasing intervals)
+    // plus flip animation (600ms) and modal to appear.
+    // Advance in smaller increments to allow React state updates between frames.
+    for (let i = 0; i < 20; i++) {
+      await act(async () => {
+        vi.advanceTimersByTime(500);
+      });
+    }
 
     vi.useRealTimers();
 
@@ -147,11 +151,10 @@ describe('端到端冒烟测试：配置 → 进入抽奖 → 空格键启动跑
     const displayedNumber = numberDisplay.textContent ?? '';
     expect(displayedNumber).toMatch(/^[A-Z]+\d+$/);
 
-    // Step 10: Close modal
+    // Step 10: Close modal via ESC key (close button was removed, modal only closes via ESC)
     vi.useFakeTimers();
-    const closeButton = screen.getByTestId('number-modal-close');
     await act(async () => {
-      fireEvent.click(closeButton);
+      fireEvent.keyDown(document, { code: 'Escape' });
     });
     vi.useRealTimers();
 

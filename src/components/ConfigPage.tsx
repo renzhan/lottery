@@ -11,6 +11,7 @@ export interface ConfigPageProps {
 
 export const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigComplete }) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [backgroundImage, setBackgroundImage] = useState<File | null>(null);
   const [rows, setRows] = useState(5);
   const [cols, setCols] = useState(20);
   const [error, setError] = useState<string | null>(null);
@@ -23,12 +24,22 @@ export const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigComplete }) => {
       return;
     }
 
+    if (backgroundImage && !validateImageFile(backgroundImage)) {
+      setError('背景图片格式无效，请上传 JPG 或 PNG 格式');
+      return;
+    }
+
     if (!validateGridInput(rows) || !validateGridInput(cols)) {
       setError('切分数量必须为大于 0 的正整数');
       return;
     }
 
-    onConfigComplete({ imageFile, rows, cols });
+    onConfigComplete({
+      imageFile,
+      rows,
+      cols,
+      ...(backgroundImage ? { backgroundImage } : {}),
+    });
   };
 
   return (
@@ -36,6 +47,12 @@ export const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigComplete }) => {
       <h1 className={styles.title}>抽奖拼图配置</h1>
       <div className={styles.form}>
         <ImageUploader onImageSelect={setImageFile} selectedFile={imageFile} />
+        <ImageUploader
+          onImageSelect={setBackgroundImage}
+          selectedFile={backgroundImage}
+          label="背景图片（可选）"
+          inputId="background-image-upload"
+        />
         <GridConfig
           rows={rows}
           cols={cols}

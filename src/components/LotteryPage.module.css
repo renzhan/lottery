@@ -9,7 +9,7 @@
 }
 
 .titleArea {
-  height: 42.5vh;
+  height: 30vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,7 +18,7 @@
 }
 
 .puzzleArea {
-  height: 32.5vh;
+  height: 45vh;
   display: flex;
   align-items: center;
   justify-content: center;

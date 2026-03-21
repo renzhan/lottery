@@ -15,18 +15,16 @@ describe('NumberModal', () => {
     expect(screen.getByTestId('number-modal-number')).toHaveTextContent('C15');
   });
 
-  it('calls onClose when close button is clicked', () => {
-    const onClose = vi.fn();
-    render(<NumberModal number="A1" visible={true} onClose={onClose} />);
-    fireEvent.click(screen.getByTestId('number-modal-close'));
-    expect(onClose).toHaveBeenCalledTimes(1);
+  it('does not render a close button', () => {
+    render(<NumberModal number="A1" visible={true} onClose={vi.fn()} />);
+    expect(screen.queryByTestId('number-modal-close')).toBeNull();
   });
 
-  it('calls onClose when overlay is clicked', () => {
+  it('does not call onClose when overlay is clicked', () => {
     const onClose = vi.fn();
     render(<NumberModal number="A1" visible={true} onClose={onClose} />);
     fireEvent.click(screen.getByTestId('number-modal-overlay'));
-    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onClose).not.toHaveBeenCalled();
   });
 
   it('does not call onClose when modal content is clicked', () => {

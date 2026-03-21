@@ -8,14 +8,17 @@ export type LotteryAction =
   | { type: 'FLIP_SELECTED' }
   | { type: 'CLOSE_MODAL' }
   | { type: 'START_MARQUEE' }
+  | { type: 'START_DECELERATION' }
   | { type: 'STOP_MARQUEE'; index: number }
   | { type: 'SET_HIGHLIGHT'; index: number };
 
 const defaultMarquee: MarqueeState = {
   isRunning: false,
+  isDecelerating: false,
   highlightIndex: null,
   selectedIndex: null,
   speed: 100,
+  remainingSteps: null,
 };
 
 export const initialState: LotteryState = {
@@ -99,14 +102,26 @@ export function lotteryReducer(state: LotteryState, action: LotteryAction): Lott
         },
       };
 
+    case 'START_DECELERATION':
+      return {
+        ...state,
+        marquee: {
+          ...state.marquee,
+          isDecelerating: true,
+          remainingSteps: Math.floor(Math.random() * 3) + 4, // random 4-6
+        },
+      };
+
     case 'STOP_MARQUEE':
       return {
         ...state,
         marquee: {
           ...state.marquee,
           isRunning: false,
+          isDecelerating: false,
           selectedIndex: action.index,
           highlightIndex: null,
+          remainingSteps: null,
         },
       };
 
