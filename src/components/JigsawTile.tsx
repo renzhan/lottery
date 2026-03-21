@@ -82,7 +82,7 @@ export const JigsawTile: React.FC<JigsawTileProps> = ({
               <clipPath id={`${clipId}-back`}><path d={path} /></clipPath>
             </defs>
             <rect x={offsetX} y={offsetY} width={tileWidth} height={tileHeight}
-              fill="rgb(4, 4, 63)" clipPath={`url(#${clipId}-back)`} />
+              fill="rgb(5, 69, 214)" clipPath={`url(#${clipId}-back)`} />
             <text x={offsetX + tileWidth / 2} y={offsetY + tileHeight / 2}
               textAnchor="middle" dominantBaseline="central"
               fill="#FFD700" fontSize={Math.min(tileWidth, tileHeight) * 0.35}

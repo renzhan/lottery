@@ -158,7 +158,9 @@ export const LotteryPage: React.FC<LotteryPageProps> = ({ config }) => {
     }
   }, [state.activeNumber, handleModalClose]);
 
-  useKeyboard({ onSpace: marquee.toggle, onEscape: handleEscape, enabled: !isFlipping });
+  const modalVisible = state.activeNumber !== null;
+
+  useKeyboard({ onSpace: marquee.toggle, onEscape: handleEscape, enabled: !isFlipping && !modalVisible });
 
   const edgeMapRef = useRef(initialState.edgeMap);
   useEffect(() => {
