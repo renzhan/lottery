@@ -6,12 +6,16 @@
   min-height: 100vh;
   padding: 2rem;
   box-sizing: border-box;
+  background: rgb(135, 206, 235);
+  color: #000000;
+  width: 100vw;
+  height: 100vh;
 }
 
 .title {
   font-size: 1.8rem;
   margin-bottom: 2rem;
-  color: #333;
+  color: #000;
 }
 
 .form {
