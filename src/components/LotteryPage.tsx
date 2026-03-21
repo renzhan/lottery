@@ -105,7 +105,7 @@ export const LotteryPage: React.FC<LotteryPageProps> = ({ config }) => {
       const edgeMap = generateEdgeMap(rows, cols);
       const pointsMap = generateEdgePointsMap(edgeMap, rows, cols, tileWidth, tileHeight);
       const numbers = generateNumbers(rows, cols);
-      const shuffledNumbers = shuffle(numbers);
+      const finalNumbers = config.shuffleNumbers ? shuffle(numbers) : numbers;
 
       const tileData: TileData[] = [];
       for (let i = 0; i < rows * cols; i++) {
@@ -116,7 +116,7 @@ export const LotteryPage: React.FC<LotteryPageProps> = ({ config }) => {
           row: r,
           col: c,
           imageDataUrl: fullImageDataUrl,
-          lotteryNumber: shuffledNumbers[i],
+          lotteryNumber: finalNumbers[i],
           isFlipped: false,
           path: generateTilePath(r, c, pointsMap, tileWidth, tileHeight),
           imgW: boardW,

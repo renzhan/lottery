@@ -84,8 +84,8 @@ const TileBackSvg: React.FC<{
         <clipPath id="modal-tile-clip"><path d={tilePath} /></clipPath>
       </defs>
       <rect
-        x={offsetX} y={offsetY}
-        width={tileWidth} height={tileHeight}
+        x={offsetX - padX} y={offsetY - padY}
+        width={tileWidth + padX * 2} height={tileHeight + padY * 2}
         fill="rgb(5, 69, 214)"
         clipPath="url(#modal-tile-clip)"
       />

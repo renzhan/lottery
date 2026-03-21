@@ -60,7 +60,32 @@ describe('ConfigPage', () => {
       imageFile: file,
       rows: 5,
       cols: 20,
+      shuffleNumbers: false,
     });
+  });
+
+  it('renders shuffle checkbox unchecked by default', () => {
+    render(<ConfigPage onConfigComplete={() => {}} />);
+    const checkbox = screen.getByLabelText('打乱号码顺序');
+    expect(checkbox).not.toBeChecked();
+  });
+
+  it('passes shuffleNumbers: true when checkbox is checked', () => {
+    const onConfigComplete = vi.fn();
+    render(<ConfigPage onConfigComplete={onConfigComplete} />);
+
+    // Upload a valid image
+    const file = new File(['dummy'], 'test.png', { type: 'image/png' });
+    const fileInput = screen.getByLabelText(/选择抽奖图片/);
+    fireEvent.change(fileInput, { target: { files: [file] } });
+
+    // Check the shuffle checkbox
+    fireEvent.click(screen.getByLabelText('打乱号码顺序'));
+
+    fireEvent.click(screen.getByText('进入抽奖'));
+    expect(onConfigComplete).toHaveBeenCalledWith(
+      expect.objectContaining({ shuffleNumbers: true }),
+    );
   });
 
   it('clears error message when a valid submission is made after an error', () => {

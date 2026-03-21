@@ -6,6 +6,7 @@ export interface LotteryConfig {
   rows: number;  // 垂直行数，默认 5
   cols: number;  // 水平列数，默认 20
   backgroundImage?: File;  // 可选背景图片
+  shuffleNumbers?: boolean;  // 是否打乱号码顺序，默认 false（不打乱）
 }
 
 /** 边缘类型 */

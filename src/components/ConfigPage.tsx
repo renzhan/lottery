@@ -14,6 +14,7 @@ export const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigComplete }) => {
   const [backgroundImage, setBackgroundImage] = useState<File | null>(null);
   const [rows, setRows] = useState(5);
   const [cols, setCols] = useState(20);
+  const [shuffleNumbers, setShuffleNumbers] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = () => {
@@ -39,6 +40,7 @@ export const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigComplete }) => {
       rows,
       cols,
       ...(backgroundImage ? { backgroundImage } : {}),
+      shuffleNumbers,
     });
   };
 
@@ -59,6 +61,14 @@ export const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigComplete }) => {
           onRowsChange={setRows}
           onColsChange={setCols}
         />
+        <label className={styles.checkboxLabel}>
+          <input
+            type="checkbox"
+            checked={shuffleNumbers}
+            onChange={(e) => setShuffleNumbers(e.target.checked)}
+          />
+          打乱号码顺序
+        </label>
         {error && <div className={styles.error} role="alert">{error}</div>}
         <button className={styles.submitBtn} onClick={handleSubmit}>
           进入抽奖
